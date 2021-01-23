@@ -114,6 +114,67 @@ int main(void) {
     			switch (nuevo_byte_uart) {
 
 					break;
+    			case 'A':
+    								gpioPutToggle(KPTB10);
+    								break;
+
+    							case 'v':
+    								gpioPutHigh(KPTB7);
+    								break;
+    							case 'V':
+    								gpioPutLow(KPTB7);
+    								break;
+
+    							case 'r':
+    								gpioPutValue(KPTB6,1);
+    								break;
+    							case 'R':
+    								gpioPutValue(KPTB6,0);
+    								break;
+
+    							case 'M':
+    								i2c0MasterReadByte(&nuevo_dato_i2c, MMA851_I2C_DEVICE_ADDRESS, MMA8451_WHO_AM_I_MEMORY_ADDRESS);
+
+    								if(nuevo_dato_i2c==0x1A)
+    									printf("MMA8451 encontrado!!\r\n");
+    								else
+    									printf("MMA8451 error\r\n");
+
+    								break;
+
+    							case 'X':
+    							case 'x':
+    								i2c0MasterReadByte(&out_x_h, MMA851_I2C_DEVICE_ADDRESS, OUT_X_MSB_EJE);
+    								i2c0MasterReadByte(&out_x_l, MMA851_I2C_DEVICE_ADDRESS, OUT_X_LSB_EJE);
+
+    								out_x_h<<=8;
+    								out_x= out_x_h|out_x_l;
+    								out_x>>=2;
+    								printf("valor en el eje X: %d\r\n",out_x);
+
+    								break;
+
+    							case 'Y':
+    							case 'y':
+    								i2c0MasterReadByte(&out_y_h, MMA851_I2C_DEVICE_ADDRESS, OUT_Y_MSB_EJE);
+    								i2c0MasterReadByte(&out_y_l, MMA851_I2C_DEVICE_ADDRESS, OUT_Y_LSB_EJE);
+
+    								out_y_h<<=8;
+    								out_y= out_y_h|out_y_l;
+    								out_y>>=2;
+    								printf("valor en el eje Y: %d\r\n",out_y);
+
+    								break;
+
+    							case 'Z':
+    							case 'z':
+    								i2c0MasterReadByte(&out_z_h, MMA851_I2C_DEVICE_ADDRESS, OUT_Z_MSB_EJE);
+    								i2c0MasterReadByte(&out_z_l, MMA851_I2C_DEVICE_ADDRESS, OUT_Z_LSB_EJE);
+
+    								out_z_h<<=8;
+    								out_z= out_z_h|out_z_l;
+    								out_z>>=2;
+    								printf("valor en el eje Z: %d\r\n",out_z);
 
 
 				}
