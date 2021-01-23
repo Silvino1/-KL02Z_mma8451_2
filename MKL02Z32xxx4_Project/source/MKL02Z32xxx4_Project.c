@@ -6,9 +6,9 @@
  * @details
  *
 */
-/*******************************************************************************
+/*********
  * Includes
- ******************************************************************************/
+ **********/
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
@@ -21,40 +21,56 @@
 #include "sdk_hal_gpio.h"
 #include "sdk_hal_uart0.h"
 #include "sdk_hal_i2c0.h"
-/*******************************************************************************
+/*********
  * Definitions
- ******************************************************************************/
-#define MMA851_I2C_DEVICE_ADDRESS	0x1D
+ **********/
+#define MMA851_I2C_DEVICE_ADDRESS 0x1D
 
 #define MMA8451_WHO_AM_I_MEMORY_ADDRESS		0x0D
+//DEFINICION DE CADA UNO DE LOS EJES DEL MAS SIGNIFICATIVO AL MENOS SIGNIFICATIVO
 
-/*******************************************************************************
+
+
+/*********
  * Private Prototypes
- ******************************************************************************/
+ **********/
 
 
-/*******************************************************************************
+/*********
  * External vars
- ******************************************************************************/
+ **********/
 
 
-/*******************************************************************************
+/*********
  * Local vars
- ******************************************************************************/
+ **********/
 
 
-/*******************************************************************************
+/*********
  * Private Source Code
- ******************************************************************************/
+ **********/
 
 
-/*******************************************************************************
+/*********
  * Public Source Code
- ******************************************************************************/
+ **********/
 int main(void) {
 	status_t status;
+	status_t status_acel;
 	uint8_t nuevo_byte_uart;
 	uint8_t	nuevo_dato_i2c;
+	//variables de x
+	uint16_t out_x_h;
+	uint16_t out_x_l;
+	uint16_t out_x;
+	//variables de y
+	uint16_t out_y_h;
+	uint16_t out_y_l;
+	uint16_t out_y;
+	//variables de z
+	uint16_t out_z_h;
+	uint16_t out_z_l;
+	uint16_t out_z;
 
   	/* Init board hardware. */
     BOARD_InitBootPins();
@@ -67,48 +83,31 @@ int main(void) {
 
     (void)uart0Inicializar(115200);	//115200bps
     (void)i2c0MasterInit(100000);	//100kbps
+    status_acel=i2c0MasterWriteByte(MMA851_I2C_DEVICE_ADDRESS, 0x2A,1); //0x2a control reg poner arriba el define
 
     PRINTF("Usar teclado para controlar LEDs\r\n");
     PRINTF("r-R led ROJO\r\n");
     PRINTF("v-V led VERDE\r\n");
     PRINTF("a-A led AZUL\r\n");
     PRINTF("M buscar acelerometro\r\n");
+    PRINTF("X eje X del  acelerometro\r\n");
+    PRINTF("Z eje Y del acelerometro\r\n");
+    PRINTF("Z eje Z del acelerometro\r\n");
+
 
 
     while(1) {
+
+
     	if(uart0CuantosDatosHayEnBuffer()>0){
     		status=uart0LeerByteDesdeBuffer(&nuevo_byte_uart);
     		if(status==kStatus_Success){
     			printf("dato:%c\r\n",nuevo_byte_uart);
     			switch (nuevo_byte_uart) {
-				case 'a':
-				case 'A':
-					gpioPutToggle(KPTB10);
-					break;
-
-				case 'v':
-					gpioPutHigh(KPTB7);
-					break;
-				case 'V':
-					gpioPutLow(KPTB7);
-					break;
-
-				case 'r':
-					gpioPutValue(KPTB6,1);
-					break;
-				case 'R':
-					gpioPutValue(KPTB6,0);
-					break;
-
-				case 'M':
-					i2c0MasterReadByte(&nuevo_dato_i2c, MMA851_I2C_DEVICE_ADDRESS, MMA8451_WHO_AM_I_MEMORY_ADDRESS);
-
-					if(nuevo_dato_i2c==0x1A)
-						printf("MMA8451 encontrado!!\r\n");
-					else
-						printf("MMA8451 error\r\n");
 
 					break;
+
+
 				}
     		}else{
     			printf("error\r\n");
